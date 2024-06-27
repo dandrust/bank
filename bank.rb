@@ -28,6 +28,7 @@ class Bank
 
   def transfer(src_account_name, dest_account_name, amount)
     deposit(src_account_name, amount)
+    return # simulate failure
     withdraw(dest_account_name, -amount)
   end
 
