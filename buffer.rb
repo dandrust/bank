@@ -1,11 +1,14 @@
 class Buffer
-  def initialize(disk)
+  def initialize(disk, persistence_strategy)
     @data = {}
     disk.load(@data)
+    @persistence = persistence_strategy.new(disk)
   end
 
   def create(key)
-    @data[key] ||= 0
+    modify do
+      @data[key] ||= 0
+    end
   end
 
   def read(key)
@@ -13,7 +16,9 @@ class Buffer
   end
 
   def update(key, value)
-    @data[key] = value if @data[key]
+    modify do
+      @data[key] = value if @data[key]
+    end
   end
   
   def delete(key)
@@ -22,5 +27,12 @@ class Buffer
 
   def peek
     @data
+  end
+
+  private
+
+  def modify
+    yield if block_given?
+    @persistence.persist(@data)
   end
 end

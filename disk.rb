@@ -13,5 +13,13 @@ class Disk
     end
     file.close
   end
+
+  def dump(buffer)
+    File.open(FILENAME, "w") do |file|
+      buffer.each do |key, value|
+        file.puts "#{key}:#{value}"
+      end
+    end
+  end
 end
 

@@ -1,10 +1,11 @@
 require_relative "buffer"
 require_relative "disk"
+require_relative "persistence"
 
 class Bank
   def initialize
     @disk = Disk.new
-    @buffer = Buffer.new(@disk)
+    @buffer = Buffer.new(@disk, Persistence::Immediate)
   end
 
   def open_account(account_name)
