@@ -26,8 +26,9 @@ class Bank
     @buffer.update(account_name, balance - amount)
   end
 
-  def transfer
-    raise NotImplementedError
+  def transfer(src_account_name, dest_account_name, amount)
+    deposit(src_account_name, amount)
+    withdraw(dest_account_name, -amount)
   end
 
   def peek
