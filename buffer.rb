@@ -1,6 +1,7 @@
 class Buffer
-  def initialize
+  def initialize(disk)
     @data = {}
+    disk.load(@data)
   end
 
   def create(key)

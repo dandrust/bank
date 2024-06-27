@@ -1,8 +1,10 @@
 require_relative "buffer"
+require_relative "disk"
 
 class Bank
   def initialize
-    @buffer = Buffer.new
+    @disk = Disk.new
+    @buffer = Buffer.new(@disk)
   end
 
   def open_account(account_name)
