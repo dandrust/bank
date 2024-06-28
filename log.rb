@@ -17,6 +17,14 @@ class Log
     end
   end
 
+  def transaction_start
+    log { "trx_start" }
+  end
+
+  def transaction_commit
+    log { "trx_commit" }
+  end
+
   private
 
   def log

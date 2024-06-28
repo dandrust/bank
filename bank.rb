@@ -2,12 +2,14 @@ require_relative "buffer"
 require_relative "disk"
 require_relative "log"
 require_relative "persistence"
+require_relative "transaction_manager"
 
 class Bank
   def initialize
     @disk = Disk.new
     @buffer = Buffer.new(@disk, Persistence::Immediate)
     @log = Log.new
+    @trx = TransactionManager.new(@log)
   end
 
   def open_account(account_name)
@@ -34,8 +36,10 @@ class Bank
   end
 
   def transfer(src_account_name, dest_account_name, amount)
-    deposit(src_account_name, amount)
-    withdraw(dest_account_name, -amount)
+    @trx.transaction do
+      deposit(src_account_name, amount)
+      withdraw(dest_account_name, -amount)
+    end
   end
 
   def peek
