@@ -28,10 +28,10 @@ class Recovery
     end
   end
 
-  def undo(@buffer, log_file)
+  def undo(buffer, log_file)
     log_file.rewind
     
-    @buffer.recover do |buf|
+    buffer.recover do |buf|
       log_file.each_line.with_index do |entry, idx|
         next if idx <= @last_transation_start
 

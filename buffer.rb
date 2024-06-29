@@ -1,8 +1,15 @@
+require_relative "benchmark"
+
 class Buffer
+  attr_reader :buffer_bm, :disk_bm
+
   def initialize(disk, persistence_strategy)
     @data = {}
     disk.load(@data)
     @persistence = persistence_strategy.new(disk)
+
+    @buffer_bm = Benchmark.new("Buffer writes")
+    @disk_bm = Benchmark.new("Disk writes")
   end
 
   def create(key)
@@ -38,7 +45,12 @@ class Buffer
   private
 
   def modify
-    yield if block_given?
-    @persistence.persist(@data)
+    @buffer_bm.track do
+      yield if block_given?
+    end
+
+    @disk_bm.track do
+      @persistence.persist(@data)
+    end
   end
 end
