@@ -13,7 +13,7 @@ class Log
 
   def update(account_name, old_value, new_value)
     log do
-      "update|#{account_name}, #{old_value}, #{new_value}"
+      "update|#{account_name},#{old_value},#{new_value}"
     end
   end
 
@@ -23,6 +23,10 @@ class Log
 
   def transaction_commit
     log { "trx_commit" }
+  end
+
+  def transaction_rollback
+    log { "trx_rollback" }
   end
 
   private
