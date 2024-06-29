@@ -3,6 +3,7 @@ require_relative "disk"
 require_relative "log"
 require_relative "persistence"
 require_relative "transaction_manager"
+require_relative "recovery"
 
 class Bank
   def initialize
@@ -10,6 +11,8 @@ class Bank
     @buffer = Buffer.new(@disk, Persistence::Immediate)
     @log = Log.new
     @trx = TransactionManager.new(@log)
+
+    Recovery.new(@log, @buffer).recover
   end
 
   def open_account(account_name)

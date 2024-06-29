@@ -29,6 +29,12 @@ class Buffer
     @data
   end
 
+  def recover
+    modify do
+      yield @data
+    end
+  end
+
   private
 
   def modify
