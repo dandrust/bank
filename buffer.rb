@@ -1,18 +1,16 @@
-require_relative "benchmark"
-
 class Buffer
-  attr_reader :buffer_bm, :disk_bm
+  attr_reader :latest_log_id
 
   def initialize(disk, persistence_strategy)
     @data = {}
-    disk.load(@data)
+    @latest_log_id = 0
+    disk.load(@data, @latest_log_id)
     @persistence = persistence_strategy.new(disk)
-
-    @buffer_bm = Benchmark.new("Buffer writes")
-    @disk_bm = Benchmark.new("Disk writes")
   end
 
-  def create(key)
+  def create(log_id, key)
+    @latest_log_id = log_id
+
     modify do
       @data[key] ||= 0
     end
@@ -22,13 +20,15 @@ class Buffer
     @data[key]
   end
 
-  def update(key, value)
+  def update(log_id, key, value)
+    @latest_log_id = log_id
+
     modify do
       @data[key] = value if @data[key]
     end
   end
   
-  def delete(key)
+  def delete(log_id, key)
     raise NotImplementedError
   end
 
@@ -37,20 +37,14 @@ class Buffer
   end
 
   def recover
-    modify do
-      yield @data
-    end
+    @latest_log_id = yield @data
+    @persistence.force(@data, @latest_log_id)
   end
 
   private
 
   def modify
-    @buffer_bm.track do
-      yield if block_given?
-    end
-
-    @disk_bm.track do
-      @persistence.persist(@data)
-    end
+    yield if block_given?
+    @persistence.persist(@data, @latest_log_id)
   end
 end

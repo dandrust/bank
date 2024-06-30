@@ -6,13 +6,18 @@ module Persistence
       @write_count = 0
     end
 
-    def persist(buffer)
+    def persist(buffer, log_id)
       @write_count += 1
       
       if @write_count >= @threshold
-        @disk.dump(buffer)
+        @disk.dump(buffer, log_id)
         @write_count = 0
       end
+    end
+
+    def force(buffer, log_id)
+      @disk.dump(buffer, log_id)
+      @write_count = 0
     end
   end
 end

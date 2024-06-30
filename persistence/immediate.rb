@@ -4,8 +4,12 @@ module Persistence
       @disk = disk
     end
 
-    def persist(buffer)
-      @disk.dump(buffer)
+    def persist(buffer, log_id)
+      @disk.dump(buffer, log_id)
+    end
+
+    def force(buffer, log_id)
+      persist(buffer, log_id)
     end
   end
 end
